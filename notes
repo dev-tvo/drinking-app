@@ -1,0 +1,33 @@
+https://www.color-hex.com/color-palette/2738
+
+todo:
+
+- Error management for input
+
+- Add more colors
+
+- Total amount visualization
+
+- Add date to drink list - When was the last time you drank this drink?
+
+- add all to database or localstorage
+
+
+helpful links:
+
+
+https://stackoverflow.com/questions/65991049/get-previous-props-value-with-react-hooks
+
+
+
+-- Counter animate --
+https://github.com/glennreyes/react-countup#installation
+
+
+
+-- remove item from array at index --
+https://stackoverflow.com/questions/5767325/how-can-i-remove-a-specific-item-from-an-array
+
+
+-- water color palette --
+https://www.color-hex.com/color-palette/2738

@@ -1,0 +1,61 @@
+.drinks-history {
+    margin-top: 30px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+
+    span {
+        margin-bottom: 10px;
+        display: block;
+        font-weight: 600;
+        font-size: 20px;
+    }
+
+    .list {
+        list-style: none;
+        padding: 0;
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 5px 0;
+
+            &:hover {
+                cursor: pointer;
+
+                button {
+                    opacity: 1;
+                    margin-right: 0;
+                }
+            }
+
+            span {
+                margin: 0;
+                font-size: 16px;
+            }
+
+            button {
+                background: unset;
+                border: unset;
+                opacity: 0;
+                margin-right: 20px;
+                transition: all .2s ease;
+
+                svg, line, path {
+                    transition: all .2s ease;
+                }
+
+                &:hover {
+                    line, path {
+                        stroke: red;
+
+                        &:first-child {
+                            stroke: none;
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
