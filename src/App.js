@@ -1,18 +1,20 @@
 import Input from "./components/InputWater/Input";
 import './app.scss'
-import {useCallback, useEffect, useReducer, useState} from "react";
+import React, {useCallback, useEffect, useReducer, useState} from "react";
 import Total from "./components/InputWater/Total";
 import InputHistory from "./components/InputWater/InputHistory";
 import total from "./components/InputWater/Total";
+import {IconTrash} from "@tabler/icons";
 
 function App() {
     const [totalAmount, setTotalAmount] = useState(0)
     const [allAddedItems, setAllAddedItems] = useState([])
-    const [storageData, setStorageData] = useState({})
+    const [data, setData] = useState([])
 
     const handleInput = (inputValue) => {
         setTotalAmount(totalAmount + +inputValue.amount)
         setAllAddedItems(oldAmount => [...oldAmount, inputValue.amount])
+        handleSubmit(inputValue.amount)
     }
 
     const handleDelete = (index, amount) => {
@@ -20,19 +22,49 @@ function App() {
         setTotalAmount(totalAmount - +amount)
     }
 
-    const handleStorage = useCallback(() => {
-        if (JSON.parse(localStorage.getItem('totalAmount')).totalAmount !== 0) {
-            const storageData = {
-                totalAmount: JSON.parse(localStorage.getItem('totalAmount')).totalAmount,
-                allAddedItems: JSON.parse(localStorage.getItem('totalAmount')).allAddedItems
+    const handleSubmit = (amount) => {
+        fetch('https://drink-water-c55d7-default-rtdb.europe-west1.firebasedatabase.app/drinks.json', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                amount: amount
+            })
+        }).then(res => res.json())
+            .then(data => console.log(data))
+            .catch(err => console.log(err))
+    }
+    const loadedTasks = [];
+
+    const getData = async () => {
+
+        try {
+            const response = await fetch(
+                'https://drink-water-c55d7-default-rtdb.europe-west1.firebasedatabase.app/drinks.json'
+            );
+
+            if (!response.ok) {
+                throw new Error('Request failed!');
             }
-            setTotalAmount(storageData.totalAmount)
-            setAllAddedItems(storageData.allAddedItems)
+
+            const data = await response.json();
+            let sum = 0;
+            for (const taskKey in data) {
+                sum += parseInt(data[taskKey].amount);
+                setTotalAmount(totalAmount + sum)
+                setAllAddedItems(oldAmount => [...oldAmount, data[taskKey].amount])
+            }
+
+        } catch (err) {
+            console.log(err);
         }
-    }, [totalAmount, allAddedItems]);
+    }
+
     useEffect(() => {
-        // handleStorage()
-    }, [totalAmount])
+        getData()
+    }, [])
 
     return (
         <div className="water-totals">
