@@ -12,7 +12,7 @@ const Input = props => {
         if (inputValue !== '') {
             props.handleInput({
                 amount: inputValue,
-                date: new Date().toLocaleString()
+                id: Math.floor(Math.random() * 10000)
             })
             setInputValue('')
         }

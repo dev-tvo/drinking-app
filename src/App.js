@@ -1,45 +1,58 @@
 import Input from "./components/InputWater/Input";
 import './app.scss'
-import React, {useCallback, useEffect, useReducer, useState} from "react";
+import React, {useEffect, useState} from "react";
 import Total from "./components/InputWater/Total";
 import InputHistory from "./components/InputWater/InputHistory";
-import total from "./components/InputWater/Total";
-import {IconTrash} from "@tabler/icons";
+import {getDatabase, set, ref, remove} from "firebase/database";
+import {initializeApp} from "firebase/app";
+
 
 function App() {
     const [totalAmount, setTotalAmount] = useState(0)
     const [allAddedItems, setAllAddedItems] = useState([])
-    const [data, setData] = useState([])
+    const [idToDelete, setIdToDelete] = useState(null)
+
+    const firebaseConfig = {
+        databaseURL: "https://drink-water-c55d7-default-rtdb.europe-west1.firebasedatabase.app/",
+    };
+
+    const app = initializeApp(firebaseConfig);
+
 
     const handleInput = (inputValue) => {
         setTotalAmount(totalAmount + +inputValue.amount)
         setAllAddedItems(oldAmount => [...oldAmount, inputValue.amount])
-        handleSubmit(inputValue.amount)
+        handleSubmit(inputValue.amount, inputValue.id)
+        setIdToDelete(inputValue.id)
     }
 
     const handleDelete = (index, amount) => {
         setAllAddedItems(allAddedItems.filter((item, i) => i !== index))
         setTotalAmount(totalAmount - +amount)
+
+        const db = getDatabase(app);
+
+        const dbRef = ref(db, 'drinks/' + idToDelete);
+
+        remove(dbRef).then(() => {
+            console.log("Remove succeeded.")
+        })
     }
 
-    const handleSubmit = (amount) => {
-        fetch('https://drink-water-c55d7-default-rtdb.europe-west1.firebasedatabase.app/drinks.json', {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                amount: amount
-            })
-        }).then(res => res.json())
-            .then(data => console.log(data))
-            .catch(err => console.log(err))
+    const handleSubmit = (amount, id) => {
+        function writeUserData(amount, date, id) {
+            const db = getDatabase(app);
+            set(ref(db, 'drinks/' + id), {
+                amount: amount,
+                date: date,
+                id: id
+            });
+        }
+
+        writeUserData(amount, new Date().toLocaleString(), id)
     }
-    const loadedTasks = [];
 
     const getData = async () => {
-
         try {
             const response = await fetch(
                 'https://drink-water-c55d7-default-rtdb.europe-west1.firebasedatabase.app/drinks.json'
