@@ -17,7 +17,6 @@ const Total = props => {
 
     const prevCount = usePreviousValue(props.total);
 
-
     const calculateTotalPercentage = (state) => {
         let percentage = (state / maxAmount) * 100
         return percentage.toFixed(0);
@@ -41,11 +40,6 @@ const Total = props => {
         setPrevAmount(prevCount)
         setNewAmount(props.total)
         calculateTotalPercentage();
-
-        if (props.total >= maxAmount) {
-
-        }
-
     }, [props.total, prevCount])
 
     return (
